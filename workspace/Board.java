@@ -50,7 +50,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private int currY;
 
     // precondition: g is not null
-	// postcondition: An 8x8 chess board made up of squares is created
+    // postcondition: An 8x8 chess board made up of squares is created
     public Board(GameWindow g) {
         this.g = g;
         board = new Square[8][8];
@@ -90,7 +90,8 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     // precondition: The board has been created with squares
-	// postcondition: black pieces pieces are at the top of the board and white pieces pieces are put at the bottom of the board
+    // postcondition: black pieces pieces are at the top of the board and white
+    // pieces pieces are put at the bottom of the board
     private void initializePieces() {
 
         // Loops through every square
@@ -166,15 +167,16 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         repaint();
     }
 
-    // precondition: The board has been properly created; e isn't null 
-	// postcondition:
+    // precondition: The board has been properly created; e isn't null
+    // postcondition: currPiece is moved to whatever square the mouse dragged it to if the square is a legal move; the game is updated
     @Override
     public void mouseReleased(MouseEvent e) {
 
         if (currPiece != null) {
 
             Square endSquare = (Square) this.getComponentAt(new Point(e.getX(), e.getY()));
-            // if endSquare is a legal move then move currPiece to endSquare, and remove it from fromMoveSquare, and change the turn
+            // if endSquare is a legal move then move currPiece to endSquare, and remove it
+            // from fromMoveSquare, and change the turn
             if (currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare)) {
                 endSquare.put(currPiece);
                 fromMoveSquare.removePiece();
@@ -205,9 +207,9 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                 s.setBorder(BorderFactory.createLineBorder(Color.red));
             }
 
-            //for (Square s : currPiece.getControlledSquares(board, fromMoveSquare)) {
-                //s.setBorder(BorderFactory.createLineBorder(Color.yellow));
-            //}
+            // for (Square s : currPiece.getControlledSquares(board, fromMoveSquare)) {
+            // s.setBorder(BorderFactory.createLineBorder(Color.yellow));
+            // }
         }
 
         repaint();
