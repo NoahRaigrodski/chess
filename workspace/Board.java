@@ -214,25 +214,30 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
             // from fromMoveSquare, and change the turn
             if (whiteTurn == currPiece.getColor()) {
                 if (currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare)) {
+                    // Saves the piece in endSquare if there is one
                     previousOccupier = endSquare.getOccupyingPiece();
 
                     endSquare.put(currPiece);
                     fromMoveSquare.removePiece();
                     whiteTurn = !whiteTurn;
 
+                    // if the currPiece color is in check then only let the color's pieces move if
+                    // it gets them out of check
+                    // Also doesn't let a piece to put itself in check
+                    // Will undo a capture if that capture puts the king in check
                     if (isInCheck(currPiece.getColor())) {
                         fromMoveSquare.put(currPiece);
                         endSquare.removePiece();
-                        if (previousOccupier != null)
+                        if (previousOccupier != null) {
                             endSquare.put(previousOccupier);
-                        System.out.println();
+                        }
                         whiteTurn = !whiteTurn;
                     }
                 }
             }
 
             // Allows Monks to capture a piece of the opposite color that is in front of
-            // them
+            // them. Code made by the Monk creator.
             if (currPiece instanceof Monk) {
 
                 if (currPiece.getColor() == true && endSquare != null && endSquare.getOccupyingPiece() != null
@@ -267,33 +272,42 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
     }
 
+    // precondition - the board is initialized and contains a king of either color.
+    // The boolean kingColor corresponds to the color of the king we wish to know
+    // the status of.
+    // postcondition - returns true of the king is in check and false otherwise.
     public boolean isInCheck(boolean kingColor) {
         Square KingsLocation = null;
 
+        // Loop through every square to find the king that is the kingColor
         for (Square[] row : board) {
             for (Square s : row) {
                 if (s.getOccupyingPiece() instanceof King && s.getOccupyingPiece().getColor() == kingColor) {
                     KingsLocation = s;
+                    // once the king is found, break
                     break;
                 }
             }
         }
 
-        
-            // loop again but through getcontrolledsquares
-            for (Square[] row : board){
-                for (Square s : row){
-                    if (s.getOccupyingPiece() != null){
-                        if (s.getOccupyingPiece().getColor() != kingColor){
-                            if (s.getOccupyingPiece().getControlledSquares(board,s).contains(KingsLocation)){
-                                System.out.println(s.getOccupyingPiece().toString() + " is putting " + KingsLocation.getOccupyingPiece().toString() + " in check");
-                                return true;
-                            }
+        // loop through every square to find squares that have a piece on them that are
+        // not the king's color
+        // check each piece's controlled squares arrayList to see if it contains the
+        // king's square
+        // If it does return true; else return false
+        for (Square[] row : board) {
+            for (Square s : row) {
+                if (s.getOccupyingPiece() != null) {
+                    if (s.getOccupyingPiece().getColor() != kingColor) {
+                        if (s.getOccupyingPiece().getControlledSquares(board, s).contains(KingsLocation)) {
+                            System.out.println(s.getOccupyingPiece().toString() + " is putting "
+                                    + KingsLocation.getOccupyingPiece().toString() + " in check");
+                            return true;
                         }
                     }
                 }
             }
-
+        }
         return false;
     }
 

@@ -8,29 +8,25 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-
 //Warning* Mess with this file at your own peril. You do not need to modify anything in here other than the 
 //messages that pop up (see below). Everything else should already work.
 public class GameWindow {
     private JFrame gameWindow;
-    
+
     public Clock blackClock;
     public Clock whiteClock;
-    
+
     private Timer timer;
-    
+
     private Board board;
-    
-    
-    
-    public GameWindow(String blackName, String whiteName, int hh, 
+
+    public GameWindow(String blackName, String whiteName, int hh,
             int mm, int ss) {
-        
+
         blackClock = new Clock(hh, ss, mm);
         whiteClock = new Clock(hh, ss, mm);
-        
+
         gameWindow = new JFrame("Chess");
-        
 
         try {
             Image whiteImg = ImageIO.read(getClass().getResource("wp.png"));
@@ -40,106 +36,106 @@ public class GameWindow {
         }
 
         gameWindow.setLocation(100, 100);
-        
-        
-        gameWindow.setLayout(new BorderLayout(20,20));
-       
+
+        gameWindow.setLayout(new BorderLayout(20, 20));
+
         // Game Data window
         JPanel gameData = gameDataPanel(blackName, whiteName, hh, mm, ss);
         gameData.setSize(gameData.getPreferredSize());
         gameWindow.add(gameData, BorderLayout.NORTH);
-        
+
         this.board = new Board(this);
-        
+
         gameWindow.add(board, BorderLayout.CENTER);
-        
+
         gameWindow.add(buttons(), BorderLayout.SOUTH);
-        
+
         gameWindow.setMinimumSize(gameWindow.getPreferredSize());
         gameWindow.setSize(gameWindow.getPreferredSize());
         gameWindow.setResizable(false);
-        
+
         gameWindow.pack();
         gameWindow.setVisible(true);
         gameWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
-    
-// Helper function to create data panel
-    
-    private JPanel gameDataPanel(final String bn, final String wn, 
+
+    // Helper function to create data panel
+
+    private JPanel gameDataPanel(final String bn, final String wn,
             final int hh, final int mm, final int ss) {
-        
+
         JPanel gameData = new JPanel();
-        gameData.setLayout(new GridLayout(3,2,0,0));
-        
-        
+        gameData.setLayout(new GridLayout(3, 2, 0, 0));
+
         // PLAYER NAMES
-        
+
         JLabel w = new JLabel(wn);
         JLabel b = new JLabel(bn);
-        
+
         w.setHorizontalAlignment(JLabel.CENTER);
         w.setVerticalAlignment(JLabel.CENTER);
         b.setHorizontalAlignment(JLabel.CENTER);
         b.setVerticalAlignment(JLabel.CENTER);
-        
+
         w.setSize(w.getMinimumSize());
         b.setSize(b.getMinimumSize());
-        
+
         gameData.add(w);
         gameData.add(b);
-        
+
         // CLOCKS
-        
+
         final JLabel bTime = new JLabel(blackClock.getTime());
         final JLabel wTime = new JLabel(whiteClock.getTime());
-        
+
         bTime.setHorizontalAlignment(JLabel.CENTER);
         bTime.setVerticalAlignment(JLabel.CENTER);
         wTime.setHorizontalAlignment(JLabel.CENTER);
         wTime.setVerticalAlignment(JLabel.CENTER);
-        
+
         if (!(hh == 0 && mm == 0 && ss == 0)) {
             timer = new Timer(1000, null);
             timer.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     boolean turn = board.getTurn();
-                    
+
                     if (turn) {
                         whiteClock.decr();
                         wTime.setText(whiteClock.getTime());
-                        
+
                         if (whiteClock.outOfTime()) {
                             timer.stop();
                             int n = JOptionPane.showConfirmDialog(
                                     gameWindow,
                                     bn + " wins by time! Play a new game? \n" +
-                                    "Choosing \"No\" quits the game.",
+                                            "Choosing \"No\" quits the game.",
                                     bn + " wins!",
                                     JOptionPane.YES_NO_OPTION);
-                            
+
                             if (n == JOptionPane.YES_OPTION) {
                                 new GameWindow(bn, wn, hh, mm, ss);
                                 gameWindow.dispose();
-                            } else gameWindow.dispose();
+                            } else
+                                gameWindow.dispose();
                         }
                     } else {
                         blackClock.decr();
                         bTime.setText(blackClock.getTime());
-                        
+
                         if (blackClock.outOfTime()) {
                             timer.stop();
                             int n = JOptionPane.showConfirmDialog(
                                     gameWindow,
                                     wn + " wins by time! Play a new game? \n" +
-                                    "Choosing \"No\" quits the game.",
+                                            "Choosing \"No\" quits the game.",
                                     wn + " wins!",
                                     JOptionPane.YES_NO_OPTION);
-                            
+
                             if (n == JOptionPane.YES_OPTION) {
                                 new GameWindow(bn, wn, hh, mm, ss);
                                 gameWindow.dispose();
-                            } else gameWindow.dispose();
+                            } else
+                                gameWindow.dispose();
                         }
                     }
                 }
@@ -149,106 +145,106 @@ public class GameWindow {
             wTime.setText("Untimed game");
             bTime.setText("Untimed game");
         }
-        
+
         gameData.add(wTime);
         gameData.add(bTime);
-        
+
         gameData.setPreferredSize(gameData.getMinimumSize());
-        
+
         return gameData;
     }
-    
+
     private JPanel buttons() {
         JPanel buttons = new JPanel();
         buttons.setLayout(new GridLayout(1, 3, 10, 0));
-        
+
         final JButton quit = new JButton("Quit");
-        
+
         quit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int n = JOptionPane.showConfirmDialog(
                         gameWindow,
                         "Are you sure you want to quit?",
                         "Confirm quit", JOptionPane.YES_NO_OPTION);
-                
+
                 if (n == JOptionPane.YES_OPTION) {
-                    if (timer != null) timer.stop();
+                    if (timer != null)
+                        timer.stop();
                     gameWindow.dispose();
                 }
             }
-          });
-        
+        });
+
         final JButton nGame = new JButton("New game");
-        
+
         nGame.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int n = JOptionPane.showConfirmDialog(
                         gameWindow,
                         "Are you sure you want to begin a new game?",
                         "Confirm new game", JOptionPane.YES_NO_OPTION);
-                
+
                 if (n == JOptionPane.YES_OPTION) {
                     SwingUtilities.invokeLater(new StartMenu());
                     gameWindow.dispose();
                 }
             }
-          });
-        
+        });
+
         final JButton instr = new JButton("How to play");
-        
+
         instr.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(gameWindow,
-                		
-                		
-                		
-                		
-                		// this is the only section you really need to modify (although you're certainly welcome to mess
-                		//with the rest of the file, but do so at your own peril)
-                        "Defeat your opponent by taking their square! You can move 2 squares in every direction and 1 square forward towards the opposite side!",
-                        
-                        
-                        
-                        
-                        
-                        
+
+                        // this is the only section you really need to modify (although you're certainly
+                        // welcome to mess
+                        // with the rest of the file, but do so at your own peril)
+                        "The pawns in this game move diagnonally but capture forward. The opposite of a normal pawn. \n"
+                                + "The helicopters move like a rook but can only land on the same colored square that they started on. Helicopters can also jump over pieces. \n"
+                                + "The ItalianKratos pieces move 2 squares in every direction including diagonally. It can also move 1 square forward and jump over pieces. \n"
+                                + "The pope moves and looks like a bishop but also can move one square to each direction of it. \n"
+                                + "The queen and king function as normal. ",
+
                         "How to play",
                         JOptionPane.PLAIN_MESSAGE);
             }
-          });
-        
+        });
+
         buttons.add(instr);
         buttons.add(nGame);
         buttons.add(quit);
-        
+
         buttons.setPreferredSize(buttons.getMinimumSize());
-        
+
         return buttons;
     }
-    
-    public void checkmateOccurred (boolean whiteWins) {
+
+    public void checkmateOccurred(boolean whiteWins) {
         if (whiteWins) {
-            if (timer != null) timer.stop();
+            if (timer != null)
+                timer.stop();
             int n = JOptionPane.showConfirmDialog(
                     gameWindow,
                     "White wins by checkmate! Set up a new game? \n" +
-                    "Choosing \"No\" lets you look at the final situation.",
+                            "Choosing \"No\" lets you look at the final situation.",
                     "White wins!",
                     JOptionPane.YES_NO_OPTION);
-            
+
             if (n == JOptionPane.YES_OPTION) {
                 SwingUtilities.invokeLater(new StartMenu());
                 gameWindow.dispose();
             }
         } else {
-            if (timer != null) timer.stop();
+            if (timer != null)
+                timer.stop();
             int n = JOptionPane.showConfirmDialog(
                     gameWindow,
                     "Black wins by checkmate! Set up a new game? \n" +
-                    "Choosing \"No\" lets you look at the final situation.",
+                            "Choosing \"No\" lets you look at the final situation.",
                     "Black wins!",
                     JOptionPane.YES_NO_OPTION);
-            
+
             if (n == JOptionPane.YES_OPTION) {
                 SwingUtilities.invokeLater(new StartMenu());
                 gameWindow.dispose();
